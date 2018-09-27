@@ -1,5 +1,5 @@
-from paystakk.request import PaystackRequest
-from paystakk.utils import build_params
+from request import PaystackRequest
+from utils import build_params
 
 
 class Customer(object):
@@ -30,7 +30,8 @@ class Customer(object):
     def __getattr__(self, item):
         return getattr(self.__base, item)
 
-    def create_customer(self, email, first_name=None, last_name=None, phone=None, metadata=None):
+    def create_customer(self, email, first_name=None, last_name=None,
+                        phone=None, metadata=None):
         params = build_params(email=email, first_name=first_name,
                               last_name=last_name, phone=phone,
                               metadata=metadata)
@@ -45,7 +46,8 @@ class Customer(object):
         :param email_or_id_or_customer_code: Customer email or customer id or customer code
         :return: dict
         """
-        url_ = '{url}/{id}'.format(url=self.url, id=email_or_id_or_customer_code)
+        url_ = '{url}/{id}'.format(url=self.url,
+                                   id=email_or_id_or_customer_code)
         self.ctx.get(url_)
 
 
@@ -137,7 +139,8 @@ class PaymentPage(object):
     @property
     def page_url(self):
         if self.ctx.status:
-            page_url = '{http}/{slug}'.format(http=self.paystack_payment_url, slug=self.slug)
+            page_url = '{http}/{slug}'.format(
+                http=self.paystack_payment_url, slug=self.slug)
             return page_url
 
     @property
@@ -151,3 +154,86 @@ class PaymentPage(object):
 
         url = '{host}/page'.format(host=self.api_url)
         self.ctx.post(url, json=params)
+
+
+class Transaction(object):
+    def __init__(self, **kwargs):
+        self.__base = PaystackRequest(**kwargs)
+        self.__url = 'https://api.paystack.co/transaction/initialize'
+
+    def __getattr__(self, item):
+        return getattr(self.__base, item)
+
+    @property
+    def ctx(self):
+        return self.__base
+
+    @property
+    def url(self):
+        return self.__url
+
+    @url.setter
+    def url(self, value):
+        self.__url = value
+
+    @property
+    def transaction_access_code(self):
+        self.ctx.data.get('access_code')
+
+    @property
+    def transaction_reference(self):
+        self.ctx.data.get('reference')
+
+    def initialize_transaction(self, amount, email, callback_url=None, reference=None, plan=None,
+                               invoice_limit=None, metadata=None, subaccount=None, transaction_charge=None,
+                               bearer=None, channels=['card', 'bank']
+                               ):
+
+        params = build_params(callback_url=callback_url, reference=reference, amount=amount, email=email, plan=plan,
+                              invoice_limit=invoice_limit, metadata=metadata, subaccount=subaccount,
+                              transaction_charge=transaction_charge,
+                              bearer=bearer, channels=channels)
+
+        self.ctx.post(self.url, json=params)
+
+
+class Refund(object):
+    def __init__(self, **kwargs):
+        self.__base = PaystackRequest(**kwargs)
+        self.__url = 'https://api.paystack.co/refund'
+
+    def __getattr__(self, item):
+        return getattr(self.__base, item)
+
+    @property
+    def ctx(self):
+        return self.__base
+
+    @property
+    def url(self):
+        return self.__url
+
+    @url.setter
+    def url(self, value):
+        self.__url = value
+
+    @property
+    def refund_id(self):
+        self.ctx.data.get('id')
+
+    @property
+    def transaction_reference(self):
+        self.ctx.data.transaction.get('reference')
+
+    @property
+    def refund_amount(self):
+        self.ctx.data.get('amount')
+
+    def create_refund(self, transaction, amount=None, currency=None, customer_note=None,
+                      merchant_note=None
+                      ):
+
+        params = build_params(transaction=transaction, amount=amount, currency=currency, customer_note=customer_note,
+                              merchant_note=None)
+
+        self.ctx.post(self.url, json=params)

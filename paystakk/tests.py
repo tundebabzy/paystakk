@@ -3,12 +3,12 @@ from unittest import TestCase
 
 import time
 
-from paystakk.utils import build_params
-from paystakk.api import TransferControl, PaymentPage, Customer, Invoice
+from utils import build_params
+from api import TransferControl, PaymentPage, Customer, Invoice,Transaction,Refund
 
-SECRET_KEY = 'YOUR_PAYSTACK_KEY'
-PUBLIC_KEY = 'YOUR_PAYSTACK_KEY'
 
+SECRET_KEY = 'sk_test_b2abc4e4d849d9a79af333d27f96603e199d7b24'
+PUBLIC_KEY = 'pk_test_a2c96793a6e75deba5f94ba21f82e50fc3572624'
 
 class TestCustomer(TestCase):
 	def setUp(self):
@@ -71,6 +71,26 @@ class TestPaymentPage(TestCase):
 		self.assertEqual(r.name, 'test page')
 		self.assertEqual(r.slug, slug)
 		self.assertEqual(r.page_url, 'https://paystack.com/pay/{slug}'.format(slug=slug))
+
+class TestTransaction(TestCase):
+	def setUp(self):
+		self.api = Transaction(secret_key=SECRET_KEY, public_key=PUBLIC_KEY)
+		self.api.initialize_transaction(amount=30000,email='test@gmail.com')
+		# self.transaction_reference = self.api.transaction_reference
+
+	def test_create_transaction(self):
+		self.assertEqual(self.api.ctx.status, True)
+
+class TestRefund(TestCase):
+	def setUp(self):
+		self.api = Transaction(secret_key=SECRET_KEY, public_key=PUBLIC_KEY)
+		self.api.initialize_transaction(amount=30000,email='test@gmail.com')
+		self.transaction_reference = self.api.transaction_reference
+
+	def test_create_refund(self):
+		api = Refund(secret_key=SECRET_KEY, public_key=PUBLIC_KEY)
+		api.create_refund(transaction=self.transaction_reference, amount=5000)
+		self.assertEqual(self.api.ctx.status, True)
 
 
 class TestFunctions(TestCase):
