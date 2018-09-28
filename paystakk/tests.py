@@ -76,27 +76,27 @@ class TestPaymentPage(TestCase):
 
 class TestTransaction(TestCase):
     def setUp(self):
-        """
+        '''
         while testing the reference must be changed because each transaction
         must have a unique reference,also there must be a predefined plan
         before it can be used in the test.
-        """
+        '''
 
         self.api = Transaction(secret_key=SECRET_KEY, public_key=PUBLIC_KEY)
         self.api.initialize_transaction(
-            amount=30000, email='test@gmail.com', reference="sales245",
-            invoice_limit=4, metadata={"custom_fields": [{"display_name":
-                                                          "Cart ID",
-                                                          "variable_name":
-                                                          "cart_id",
-                                                          "value": "8393"}]},
-            transaction_charge=200, bearer="account", channels=["card"])
+            amount=30000, email='test@gmail.com', reference='sales245',
+            invoice_limit=4, metadata={'custom_fields': [{'display_name':
+                                                          'Cart ID',
+                                                          'variable_name':
+                                                          'cart_id',
+                                                          'value': '8393'}]},
+            transaction_charge=200, bearer='account', channels=['card'])
 
     def test_create_transaction(self):
         self.assertEqual(self.api.ctx.status, True)
-        self.assertEqual(self.api.ctx.message, "Authorization URL created")
-        self.assertEqual(self.api.ctx.data["reference"],
-                         "sales245")
+        self.assertEqual(self.api.ctx.message, 'Authorization URL created')
+        self.assertEqual(self.api.ctx.data['reference'],
+                         'sales245')
 
 
 class TestRefund(TestCase):
