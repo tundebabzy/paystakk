@@ -40,10 +40,12 @@ class Customer(object):
 
     def fetch_customer(self, email_or_id_or_customer_code):
         """
-        If there is no customer that satisfies the `email_or_id_or_customer_code`
+        If there is no customer that satisfies the
+        `email_or_id_or_customer_code`
         argument, it returns None
 
-        :param email_or_id_or_customer_code: Customer email or customer id or customer code
+        :param email_or_id_or_customer_code: Customer email or customer id or
+        customer code
         :return: dict
         """
         url_ = '{url}/{id}'.format(url=self.url,
@@ -86,16 +88,20 @@ class Invoice(object):
 
         params = build_params(customer=customer, amount=amount,
                               due_date=due_date, description=description,
-                              line_items=line_items, tax=tax, currency=currency,
+                              line_items=line_items, tax=tax,
+                              currency=currency,
                               metadata=metadata,
                               send_notification=send_notification, draft=draft,
-                              has_invoice=has_invoice, invoice_number=invoice_number)
+                              has_invoice=has_invoice,
+                              invoice_number=invoice_number)
 
         self.ctx.post(self.url, json=params)
 
-    def list_invoices(self, customer=None, paid=None, status=None, currency=None, include_archive=None):
+    def list_invoices(self, customer=None, paid=None, status=None,
+                      currency=None, include_archive=None):
         params = build_params(
-            customer=customer, paid=paid, status=status, currency=currency, include_archive=include_archive)
+            customer=customer, paid=paid, status=status, currency=currency,
+            include_archive=include_archive)
         self.ctx.get(self.url, payload=params)
 
 
@@ -147,7 +153,8 @@ class PaymentPage(object):
     def name(self):
         return self.ctx.data.get('name')
 
-    def create_page(self, name, description=None, amount=None, slug=None, redirect_url=None, custom_fields=None):
+    def create_page(self, name, description=None, amount=None, slug=None,
+                    redirect_url=None, custom_fields=None):
         params = build_params(
             name=name, description=description, amount=amount, slug=slug,
             redirect_url=redirect_url, custom_fields=custom_fields)
@@ -166,31 +173,56 @@ class Transaction(object):
 
     @property
     def ctx(self):
+        """
+        making use of a getter so as to make the private attribute
+        easily accessible
+        """
         return self.__base
 
     @property
     def url(self):
+        """
+        making use of a getter so as to make the private attribute
+        easily accessible
+        """
         return self.__url
 
     @url.setter
     def url(self, value):
+        """
+        making use of a setter so as to make the private attribute easily
+        accessible when it needs to be changed
+        """
         self.__url = value
 
     @property
     def transaction_access_code(self):
+        """
+        this will fetch the access code of the transaction from the
+         api response
+        """
         self.ctx.data.get('access_code')
 
     @property
     def transaction_reference(self):
+        """
+        this will fetch the unique reference code of the transaction from
+        the api response
+        """
         self.ctx.data.get('reference')
 
-    def initialize_transaction(self, amount, email, callback_url=None, reference=None, plan=None,
-                               invoice_limit=None, metadata=None, subaccount=None, transaction_charge=None,
+    def initialize_transaction(self, amount, email, callback_url=None,
+                               reference=None, plan=None,
+                               invoice_limit=None, metadata=None,
+                               subaccount=None, transaction_charge=None,
                                bearer=None, channels=['card', 'bank']
                                ):
 
-        params = build_params(callback_url=callback_url, reference=reference, amount=amount, email=email, plan=plan,
-                              invoice_limit=invoice_limit, metadata=metadata, subaccount=subaccount,
+        params = build_params(amount=amount, email=email,
+                              callback_url=callback_url,
+                              reference=reference,  plan=plan,
+                              invoice_limit=invoice_limit, metadata=metadata,
+                              subaccount=subaccount,
                               transaction_charge=transaction_charge,
                               bearer=bearer, channels=channels)
 
@@ -229,11 +261,13 @@ class Refund(object):
     def refund_amount(self):
         self.ctx.data.get('amount')
 
-    def create_refund(self, transaction, amount=None, currency=None, customer_note=None,
+    def create_refund(self, transaction, amount=None, currency=None,
+                      customer_note=None,
                       merchant_note=None
                       ):
 
-        params = build_params(transaction=transaction, amount=amount, currency=currency, customer_note=customer_note,
+        params = build_params(transaction=transaction, amount=amount,
+                              currency=currency, customer_note=customer_note,
                               merchant_note=None)
 
         self.ctx.post(self.url, json=params)

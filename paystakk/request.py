@@ -11,6 +11,7 @@ class PaystackRequest(object):
         This class should not be used directly. Instead use it to compose
         "Paystack feature classes" like `Transaction`, `PaymentPage`, etc.
         """
+
     def __init__(self, **kwargs):
         self.req_headers = kwargs.get(
             'req_headers',
