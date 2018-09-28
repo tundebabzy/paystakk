@@ -41,8 +41,7 @@ class Customer(object):
     def fetch_customer(self, email_or_id_or_customer_code):
         """
         If there is no customer that satisfies the
-        `email_or_id_or_customer_code`
-        argument, it returns None
+        `email_or_id_or_customer_code`argument, it returns None
 
         :param email_or_id_or_customer_code: Customer email or customer id or
         customer code
@@ -173,42 +172,22 @@ class Transaction(object):
 
     @property
     def ctx(self):
-        """
-        making use of a getter so as to make the private attribute
-        easily accessible
-        """
         return self.__base
 
     @property
     def url(self):
-        """
-        making use of a getter so as to make the private attribute
-        easily accessible
-        """
         return self.__url
 
     @url.setter
     def url(self, value):
-        """
-        making use of a setter so as to make the private attribute easily
-        accessible when it needs to be changed
-        """
         self.__url = value
 
     @property
     def transaction_access_code(self):
-        """
-        this will fetch the access code of the transaction from the
-         api response
-        """
         self.ctx.data.get('access_code')
 
     @property
     def transaction_reference(self):
-        """
-        this will fetch the unique reference code of the transaction from
-        the api response
-        """
         self.ctx.data.get('reference')
 
     def initialize_transaction(self, amount, email, callback_url=None,
