@@ -83,15 +83,21 @@ class TestTransaction(TestCase):
                           'cart_id',
                           'value': '8393'}]
         self.api.initialize_transaction(
-            amount=30000, email='test@gmail.com', reference='sales245',
+            amount=30000, email='test@gmail.com', reference='sales25',
             invoice_limit=4, metadata={'custom_fields': custom_fields},
             transaction_charge=200, bearer='account', channels=['card'])
+        self.transaction_reference = self.api.transaction_reference
+        self.transaction_access_code = self.api.transaction_access_code
 
     def test_create_transaction(self):
         self.assertEqual(self.api.ctx.status, True)
         self.assertEqual(self.api.ctx.message, 'Authorization URL created')
         self.assertEqual(self.api.ctx.data['reference'],
                          'sales245')
+        self.assertEqual(self.transaction_reference,
+                         self.api.transaction_reference)
+        self.assertEqual(self.transaction_access_code,
+                         self.api.transaction_access_code)
 
 
 class TestRefund(TestCase):

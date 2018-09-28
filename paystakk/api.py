@@ -184,11 +184,11 @@ class Transaction(object):
 
     @property
     def transaction_access_code(self):
-        self.ctx.data.get('access_code')
+        self.ctx.data.get('access_code', '')
 
     @property
     def transaction_reference(self):
-        self.ctx.data.get('reference')
+        self.ctx.data.get('reference', '')
 
     def initialize_transaction(self, amount, email, callback_url=None,
                                reference=None, plan=None,
