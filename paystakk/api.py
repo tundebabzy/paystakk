@@ -165,7 +165,7 @@ class PaymentPage(object):
 class Transaction(object):
     def __init__(self, **kwargs):
         self.__base = PaystackRequest(**kwargs)
-        self.__url = 'https://api.paystack.co/transaction/initialize'
+        self.__url = 'https://api.paystack.co/transaction'
 
     def __getattr__(self, item):
         return getattr(self.__base, item)
@@ -204,8 +204,21 @@ class Transaction(object):
                               subaccount=subaccount,
                               transaction_charge=transaction_charge,
                               bearer=bearer, channels=channels)
+        url_ = '{url}/initialize'.format(url=self.url)
+        self.ctx.post(url_, json=params)
 
-        self.ctx.post(self.url, json=params)
+    def verify_transaction(self, reference):
+        """
+        If there is no customer that satisfies the
+        `email_or_id_or_customer_code`argument, it returns None
+
+        :param email_or_id_or_customer_code: Customer email or customer id or
+        customer code
+        :return: dict
+        """
+        url_ = '{url}/{reference}'.format(url=self.url,
+                                          reference=self.transaction_reference)
+        self.ctx.get(url_)
 
 
 class Refund(object):
