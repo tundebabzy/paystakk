@@ -210,15 +210,61 @@ class Transaction(object):
     def verify_transaction(self, reference):
         """
         If there is no customer that satisfies the
-        `email_or_id_or_customer_code`argument, it returns None
+        `reference`argument, it returns None
 
-        :param email_or_id_or_customer_code: Customer email or customer id or
-        customer code
+        :param reference:trandaction reference
         :return: dict
         """
         url_ = '{url}/{reference}'.format(url=self.url,
                                           reference=self.transaction_reference)
         self.ctx.get(url_)
+
+    def list_transaction(self, perPage=None, page=None, customer=None, status=None, from=None, to=None, amount=None):
+        params = build_params(
+            perPage=perPage, page=page, customer=customer, status=status, from=from, to=to, amount=amount)
+        self.ctx.get(self.url, payload=params)
+
+    def fetch_transaction(self, id):
+        """
+        If there is no transaction that satisfies the
+        `id`argument, it returns None
+
+        :param id: the transaction id
+        :return: dict
+        """
+        url_ = '{url}/{id}'.format(url=self.url,
+                                   id=id)
+        self.ctx.get(url_)
+
+    def charge_authorization(self, authorization_code, amount, email, reference=None
+                             plan=None, currency=None,
+                             invoice_limit=None, metadata=None,
+                             subaccount=None, transaction_charge=None,
+                             bearer=None
+                             ):
+
+        params = build_params(authorization_code=authorization_code,
+                              amount=amount, email=email,
+                              reference=reference,  plan=plan,
+                              invoice_limit=invoice_limit, metadata=metadata,
+                              subaccount=subaccount,
+                              transaction_charge=transaction_charge,
+                              bearer=bearer)
+        url_ = '{url}/charge_authorization'.format(url=self.url)
+        self.ctx.post(url_, json=params)
+
+
+def view_transaction_timeline(self, id):
+    """
+    If there is no transaction that satisfies the
+    `id`argument, it returns None
+
+    :param id: the transaction id
+    :return: dict
+    """
+    url_ = '{url}/timeline/{id}'.format(url=self.url,
+                                        id=id)
+    self.ctx.get(url_)
 
 
 class Refund(object):
