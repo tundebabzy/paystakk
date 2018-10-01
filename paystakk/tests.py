@@ -103,13 +103,33 @@ class TestTransaction(TestCase):
         self.api.verify_transaction(reference='sales90')
         self.assertEqual(True, self.api.ctx.status)
         self.assertEqual(self.api.ctx.message, 'Verification successful')
-        self.assertEqual(self.api.ctx.data['amount'], '30000')
+        self.assertEqual(self.api.ctx.data['amount'], 3000000)
         self.assertEqual(self.api.ctx.data['currency'], 'NGN')
         self.assertEqual(self.api.ctx.data['status'], 'success')
         self.assertEqual(self.api.ctx.data['reference'], 'sales90')
         self.assertEqual(self.api.ctx.data['domain'], 'test')
         self.assertEqual(self.api.ctx.data['metadata'], '0')
         self.assertEqual(self.api.ctx.data['gateway_response'], 'Successful')
+        self.assertEqual(self.api.ctx.data['message'], 'null')
+        self.assertEqual(self.api.ctx.data['channel'], 'card')
+
+    def test_list_transaction(self):
+        self.api.list_transaction()
+        self.assertEqual(self.api.ctx.status, True)
+        self.assertEqual(self.api.ctx.message, 'Transactions retrieved')
+
+    def test_fetch_transaction(self):
+        self.api.fetch_transaction(transaction_id='54941338')
+        self.assertEqual(True, self.api.ctx.status)
+        self.assertEqual(self.api.ctx.message, 'Transaction retrieved')
+        self.assertEqual(self.api.ctx.data['id'], 54941338)
+        self.assertEqual(self.api.ctx.data['amount'], 3000000)
+        self.assertEqual(self.api.ctx.data['currency'], 'NGN')
+        self.assertEqual(self.api.ctx.data['status'], 'abandoned')
+        self.assertEqual(self.api.ctx.data['reference'], 'sales155')
+        self.assertEqual(self.api.ctx.data['domain'], 'test')
+        self.assertEqual(
+            self.api.ctx.data['gateway_response'], 'The transaction was not completed')
         self.assertEqual(self.api.ctx.data['message'], 'null')
         self.assertEqual(self.api.ctx.data['channel'], 'card')
 
