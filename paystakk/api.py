@@ -207,7 +207,7 @@ class Transaction(object):
         url_ = '{url}/initialize'.format(url=self.url)
         self.ctx.post(url_, json=params)
 
-    def verify_transaction(self, transaction_reference):
+    def verify_transaction(self, reference):
         """
         If there is no customer that satisfies the
         `reference`argument, it returns None
@@ -215,8 +215,8 @@ class Transaction(object):
         :param reference:trandaction reference
         :return: dict
         """
-        url_ = '{url}/{reference}'.format(url=self.url,
-                                          reference=transaction_reference)
+        url_ = '{url}/verify/{reference}'.format(url=self.url,
+                                                 reference=reference)
         self.ctx.get(url_)
 
     def list_transaction(self, perPage=None, page=None, customer=None,
