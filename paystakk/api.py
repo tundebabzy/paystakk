@@ -267,6 +267,32 @@ def view_transaction_timeline(self, id):
     self.ctx.get(url_)
 
 
+def export_transaction(self, from=None, to=None, settled=None,
+                       customer=None, currency=None, settlement=None,
+                       amount=None, status=None, payment_page=None):
+    build_params(from=from, to=to, settled=settled, customer=customer,
+                 currency=currency, settlement=settlement, amount=amount,
+                 status=status)
+    url_ = '{url}/export'.format(url=self.url)
+    self.ctx.get(url_)
+
+
+def request_reauthorization(self, authorization_code, amount, email,
+                            reference=None, metadata=None):
+    build_params(authorization_code=authorization_code, amount=amount,
+                 email=email, reference=reference, metadata=metadata)
+    url_ = '{url}/request_reauthorization'.format(url=self.url)
+    self.ctx.post(url_)
+
+
+def check_reauthorization(self, authorization_code, amount, email,
+                          currency=None):
+    build_params(authorization_code=authorization_code, amount=amount,
+                 email=email, currency=currency)
+    url_ = '{url}/check_reauthorization'.format(url=self.url)
+    self.ctx.post(url_)
+
+
 class Refund(object):
     def __init__(self, **kwargs):
         self.__base = PaystackRequest(**kwargs)
