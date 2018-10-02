@@ -256,50 +256,48 @@ class Transaction(object):
         url_ = '{url}/charge_authorization'.format(url=self.url)
         self.ctx.post(url_, json=params)
 
+    def view_transaction_timeline(self, transaction_id):
+        """
+        If there is no transaction that satisfies the
+        `id`argument, it returns None
 
-def view_transaction_timeline(self, transaction_id):
-    """
-    If there is no transaction that satisfies the
-    `id`argument, it returns None
+        :param id: the transaction id
+        :return: dict
+        """
+        url_ = '{url}/timeline/{id}'.format(url=self.url,
+                                            id=transaction_id)
+        self.ctx.get(url_)
 
-    :param id: the transaction id
-    :return: dict
-    """
-    url_ = '{url}/timeline/{id}'.format(url=self.url,
-                                        id=transaction_id)
-    self.ctx.get(url_)
+    def transaction_total(self, from_=None, to=None):
+        param = {'from': from_, 'to': to}
+        params = build_params(**param)
+        url_ = '{url}/totals'.format(url=self.url)
+        self.ctx.get(url_, payload=params)
 
+    def export_transaction(self, start_from=None, to=None, settled=None,
+                           customer=None, currency=None, settlement=None,
+                           amount=None, status=None, payment_page=None):
+        params = build_params(start_from=start_from, to=to, settled=settled,
+                              customer=customer, currency=currency,
+                              settlement=settlement, amount=amount,
+                              status=status)
+        url_ = '{url}/export'.format(url=self.url)
+        self.ctx.get(url_, payload=params)
 
-def transaction_total(self, start_from=None, to=None):
-    params = build_params(start_from=start_from, to=to)
-    url_ = '{url}/totals'.format(url=self.url)
-    self.ctx.get(url_, payload=params)
+    def request_reauthorization(self, authorization_code, amount, email,
+                                reference=None, metadata=None):
+        params = build_params(authorization_code=authorization_code,
+                              amount=amount, email=email, reference=reference,
+                              metadata=metadata)
+        url_ = '{url}/request_reauthorization'.format(url=self.url)
+        self.ctx.post(url_, json=params)
 
-
-def export_transaction(self, start_from=None, to=None, settled=None,
-                       customer=None, currency=None, settlement=None,
-                       amount=None, status=None, payment_page=None):
-    params = build_params(start_from=start_from, to=to, settled=settled,
-                          customer=customer, currency=currency,
-                          settlement=settlement, amount=amount, status=status)
-    url_ = '{url}/export'.format(url=self.url)
-    self.ctx.get(url_, payload=params)
-
-
-def request_reauthorization(self, authorization_code, amount, email,
-                            reference=None, metadata=None):
-    params = build_params(authorization_code=authorization_code, amount=amount,
-                          email=email, reference=reference, metadata=metadata)
-    url_ = '{url}/request_reauthorization'.format(url=self.url)
-    self.ctx.post(url_, json=params)
-
-
-def check_reauthorization(self, authorization_code, amount, email,
-                          currency=None):
-    params = build_params(authorization_code=authorization_code, amount=amount,
-                          email=email, currency=currency)
-    url_ = '{url}/check_reauthorization'.format(url=self.url)
-    self.ctx.post(url_, json=params)
+    def check_reauthorization(self, authorization_code, amount, email,
+                              currency=None):
+        params = build_params(authorization_code=authorization_code,
+                              amount=amount, email=email, currency=currency)
+        url_ = '{url}/check_reauthorization'.format(url=self.url)
+        self.ctx.post(url_, json=params)
 
 
 class Refund(object):

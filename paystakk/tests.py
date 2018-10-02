@@ -130,10 +130,16 @@ class TestTransaction(TestCase):
         self.assertEqual(self.api.ctx.data['status'], 'abandoned')
         self.assertEqual(self.api.ctx.data['reference'], 'sales155')
         self.assertEqual(self.api.ctx.data['domain'], 'test')
-        self.assertEqual(
-            self.api.ctx.data['gateway_response'], 'The transaction was not completed')
+        self.assertEqual(self.api.ctx.data['gateway_response'],
+                         'The transaction was not completed')
         self.assertEqual(self.api.ctx.data['message'], None)
         self.assertEqual(self.api.ctx.data['channel'], 'card')
+
+    def test_view_transaction_timeline(self):
+        self.api.view_transaction_timeline(transaction_id=54941338)
+        self.assertEqual(True, self.api.ctx.status)
+        self.assertEqual(self.api.ctx.message, 'Timeline retrieved')
+        self.assertEqual(self.api.ctx.data, {})
 
 
 class TestRefund(TestCase):
