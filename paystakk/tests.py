@@ -141,6 +141,22 @@ class TestTransaction(TestCase):
         self.assertEqual(self.api.ctx.message, 'Timeline retrieved')
         self.assertEqual(self.api.ctx.data, {})
 
+    def test_transaction_total(self):
+        self.api.transaction_total(from_='2018-09-27', to='2018-10-02')
+        self.assertEqual(True, self.api.ctx.status)
+        self.assertEqual(self.api.ctx.message, 'Transaction totals')
+        self.assertEqual(self.api.ctx.data['total_transactions'], 0)
+        self.assertEqual(self.api.ctx.data['total_volume'], 0)
+        self.assertEqual(self.api.ctx.data['total_volume_by_currency']
+                         [0]['currency'], 'NGN')
+        self.assertEqual(self.api.ctx.data['total_volume_by_currency']
+                         [0]['amount'], 0)
+        self.assertEqual(self.api.ctx.data['pending_transfers'], 0)
+        self.assertEqual(self.api.ctx.data['pending_transfers_by_currency']
+                         [0]['currency'], 'NGN')
+        self.assertEqual(self.api.ctx.data['pending_transfers_by_currency']
+                         [0]['amount'], 0)
+
 
 class TestRefund(TestCase):
     def setUp(self):

@@ -274,13 +274,14 @@ class Transaction(object):
         url_ = '{url}/totals'.format(url=self.url)
         self.ctx.get(url_, payload=params)
 
-    def export_transaction(self, start_from=None, to=None, settled=None,
+    def export_transaction(self, from_=None, to=None, settled=None,
                            customer=None, currency=None, settlement=None,
                            amount=None, status=None, payment_page=None):
-        params = build_params(start_from=start_from, to=to, settled=settled,
-                              customer=customer, currency=currency,
-                              settlement=settlement, amount=amount,
-                              status=status)
+        param = {'from' = from_, 'to' = to, 'settled' = settled,
+                 'customer' = customer, 'currency' = currency,
+                 'settlement' = settlement, 'amount' = amount,
+                 'status' = status}
+        params = build_params(**param)
         url_ = '{url}/export'.format(url=self.url)
         self.ctx.get(url_, payload=params)
 
