@@ -220,10 +220,11 @@ class Transaction(object):
         self.ctx.get(url_)
 
     def list_transaction(self, perPage=None, page=None, customer=None,
-                         status=None, start_from=None, to=None, amount=None):
-        params = build_params(
-            perPage=perPage, page=page, customer=customer, status=status,
-            start_from=start_from, to=to, amount=amount)
+                         status=None, from_=None, to=None, amount=None):
+        param = {"perPage": perPage, "page": page, "customer": customer,
+                 "status": status, "from": from_, "to": to, "amount": amount
+                 }
+        params = build_params(**param)
         self.ctx.get(self.url, payload=params)
 
     def fetch_transaction(self, transaction_id):
