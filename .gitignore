@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+.Python
+env/
+
+# dotenv
+.env
+
+# virtualenv
+.virtual
+venv/
+ENV/
+
+# mypy
+.mypy_cache/

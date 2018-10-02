@@ -1,5 +1,5 @@
-from paystakk.request import PaystackRequest
-from paystakk.utils import build_params
+from request import PaystackRequest
+from utils import build_params
 
 
 class Customer(object):
@@ -30,7 +30,8 @@ class Customer(object):
     def __getattr__(self, item):
         return getattr(self.__base, item)
 
-    def create_customer(self, email, first_name=None, last_name=None, phone=None, metadata=None):
+    def create_customer(self, email, first_name=None, last_name=None,
+                        phone=None, metadata=None):
         params = build_params(email=email, first_name=first_name,
                               last_name=last_name, phone=phone,
                               metadata=metadata)
@@ -39,13 +40,15 @@ class Customer(object):
 
     def fetch_customer(self, email_or_id_or_customer_code):
         """
-        If there is no customer that satisfies the `email_or_id_or_customer_code`
-        argument, it returns None
+        If there is no customer that satisfies the
+        `email_or_id_or_customer_code`argument, it returns None
 
-        :param email_or_id_or_customer_code: Customer email or customer id or customer code
+        :param email_or_id_or_customer_code: Customer email or customer id or
+        customer code
         :return: dict
         """
-        url_ = '{url}/{id}'.format(url=self.url, id=email_or_id_or_customer_code)
+        url_ = '{url}/{id}'.format(url=self.url,
+                                   id=email_or_id_or_customer_code)
         self.ctx.get(url_)
 
 
@@ -84,16 +87,20 @@ class Invoice(object):
 
         params = build_params(customer=customer, amount=amount,
                               due_date=due_date, description=description,
-                              line_items=line_items, tax=tax, currency=currency,
+                              line_items=line_items, tax=tax,
+                              currency=currency,
                               metadata=metadata,
                               send_notification=send_notification, draft=draft,
-                              has_invoice=has_invoice, invoice_number=invoice_number)
+                              has_invoice=has_invoice,
+                              invoice_number=invoice_number)
 
         self.ctx.post(self.url, json=params)
 
-    def list_invoices(self, customer=None, paid=None, status=None, currency=None, include_archive=None):
+    def list_invoices(self, customer=None, paid=None, status=None,
+                      currency=None, include_archive=None):
         params = build_params(
-            customer=customer, paid=paid, status=status, currency=currency, include_archive=include_archive)
+            customer=customer, paid=paid, status=status, currency=currency,
+            include_archive=include_archive)
         self.ctx.get(self.url, payload=params)
 
 
@@ -137,17 +144,202 @@ class PaymentPage(object):
     @property
     def page_url(self):
         if self.ctx.status:
-            page_url = '{http}/{slug}'.format(http=self.paystack_payment_url, slug=self.slug)
+            page_url = '{http}/{slug}'.format(
+                http=self.paystack_payment_url, slug=self.slug)
             return page_url
 
     @property
     def name(self):
         return self.ctx.data.get('name')
 
-    def create_page(self, name, description=None, amount=None, slug=None, redirect_url=None, custom_fields=None):
+    def create_page(self, name, description=None, amount=None, slug=None,
+                    redirect_url=None, custom_fields=None):
         params = build_params(
             name=name, description=description, amount=amount, slug=slug,
             redirect_url=redirect_url, custom_fields=custom_fields)
 
         url = '{host}/page'.format(host=self.api_url)
         self.ctx.post(url, json=params)
+
+
+class Transaction(object):
+    def __init__(self, **kwargs):
+        self.__base = PaystackRequest(**kwargs)
+        self.__url = 'https://api.paystack.co/transaction'
+
+    def __getattr__(self, item):
+        return getattr(self.__base, item)
+
+    @property
+    def ctx(self):
+        return self.__base
+
+    @property
+    def url(self):
+        return self.__url
+
+    @url.setter
+    def url(self, value):
+        self.__url = value
+
+    @property
+    def transaction_access_code(self):
+        self.ctx.data.get('access_code', '')
+
+    @property
+    def transaction_reference(self):
+        self.ctx.data.get('reference', '')
+
+    def initialize_transaction(self, amount, email, callback_url=None,
+                               reference=None, plan=None,
+                               invoice_limit=None, metadata=None,
+                               subaccount=None, transaction_charge=None,
+                               bearer=None, channels=['card', 'bank']
+                               ):
+
+        params = build_params(amount=amount, email=email,
+                              callback_url=callback_url,
+                              reference=reference,  plan=plan,
+                              invoice_limit=invoice_limit, metadata=metadata,
+                              subaccount=subaccount,
+                              transaction_charge=transaction_charge,
+                              bearer=bearer, channels=channels)
+        url_ = '{url}/initialize'.format(url=self.url)
+        self.ctx.post(url_, json=params)
+
+    def verify_transaction(self, reference):
+        """
+        If there is no customer that satisfies the
+        `reference`argument, it returns None
+
+        :param reference:trandaction reference
+        :return: dict
+        """
+        url_ = '{url}/verify/{reference}'.format(url=self.url,
+                                                 reference=reference)
+        self.ctx.get(url_)
+
+    def list_transaction(self, perPage=None, page=None, customer=None,
+                         status=None, from_=None, to=None, amount=None):
+        param = {"perPage": perPage, "page": page, "customer": customer,
+                 "status": status, "from": from_, "to": to, "amount": amount
+                 }
+        params = build_params(**param)
+        self.ctx.get(self.url, payload=params)
+
+    def fetch_transaction(self, transaction_id):
+        """
+        If there is no transaction that satisfies the
+        `id`argument, it returns None
+
+        :param id: the transaction id
+        :return: dict
+        """
+        url_ = '{url}/{id}'.format(url=self.url,
+                                   id=transaction_id)
+        self.ctx.get(url_)
+
+    def charge_authorization(self, authorization_code, amount, email,
+                             reference=None, plan=None, currency=None,
+                             invoice_limit=None, metadata=None,
+                             subaccount=None, transaction_charge=None,
+                             bearer=None
+                             ):
+
+        params = build_params(authorization_code=authorization_code,
+                              amount=amount, email=email,
+                              reference=reference,  plan=plan,
+                              invoice_limit=invoice_limit, metadata=metadata,
+                              subaccount=subaccount,
+                              transaction_charge=transaction_charge,
+                              bearer=bearer)
+        url_ = '{url}/charge_authorization'.format(url=self.url)
+        self.ctx.post(url_, json=params)
+
+    def view_transaction_timeline(self, transaction_id):
+        """
+        If there is no transaction that satisfies the
+        `id`argument, it returns None
+
+        :param id: the transaction id
+        :return: dict
+        """
+        url_ = '{url}/timeline/{id}'.format(url=self.url,
+                                            id=transaction_id)
+        self.ctx.get(url_)
+
+    def transaction_total(self, from_=None, to=None):
+        param = {'from': from_, 'to': to}
+        params = build_params(**param)
+        url_ = '{url}/totals'.format(url=self.url)
+        self.ctx.get(url_, payload=params)
+
+    def export_transaction(self, from_=None, to=None, settled=None,
+                           customer=None, currency=None, settlement=None,
+                           amount=None, status=None, payment_page=None):
+        param = {'from': from_, 'to': to, 'settled': settled,
+                 'customer': customer, 'currency': currency,
+                 'settlement': settlement, 'amount': amount,
+                 'status': status}
+        params = build_params(**param)
+        url_ = '{url}/export'.format(url=self.url)
+        self.ctx.get(url_, payload=params)
+
+    def request_reauthorization(self, authorization_code, amount, email,
+                                reference=None, metadata=None):
+        params = build_params(authorization_code=authorization_code,
+                              amount=amount, email=email, reference=reference,
+                              metadata=metadata)
+        url_ = '{url}/request_reauthorization'.format(url=self.url)
+        self.ctx.post(url_, json=params)
+
+    def check_reauthorization(self, authorization_code, amount, email,
+                              currency=None):
+        params = build_params(authorization_code=authorization_code,
+                              amount=amount, email=email, currency=currency)
+        url_ = '{url}/check_reauthorization'.format(url=self.url)
+        self.ctx.post(url_, json=params)
+
+
+class Refund(object):
+    def __init__(self, **kwargs):
+        self.__base = PaystackRequest(**kwargs)
+        self.__url = 'https://api.paystack.co/refund'
+
+    def __getattr__(self, item):
+        return getattr(self.__base, item)
+
+    @property
+    def ctx(self):
+        return self.__base
+
+    @property
+    def url(self):
+        return self.__url
+
+    @url.setter
+    def url(self, value):
+        self.__url = value
+
+    @property
+    def refund_id(self):
+        self.ctx.data.get('id')
+
+    @property
+    def transaction_reference(self):
+        self.ctx.data.transaction.get('reference')
+
+    @property
+    def refund_amount(self):
+        self.ctx.data.get('amount')
+
+    def create_refund(self, transaction, amount=None, currency=None,
+                      customer_note=None,
+                      merchant_note=None
+                      ):
+
+        params = build_params(transaction=transaction, amount=amount,
+                              currency=currency, customer_note=customer_note,
+                              merchant_note=None)
+
+        self.ctx.post(self.url, json=params)
