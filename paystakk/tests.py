@@ -4,8 +4,8 @@ from utils import build_params
 from api import TransferControl, PaymentPage, Customer, Invoice, Transaction, Refund
 
 
-SECRET_KEY = 'sk_test_b2abc4e4d849d9a79af333d27f96603e199d7b24'
-PUBLIC_KEY = 'pk_test_a2c96793a6e75deba5f94ba21f82e50fc3572624'
+SECRET_KEY = 'YOUR PAYSTACK SECRET_KEY'
+PUBLIC_KEY = 'YOUR PAYSTACK PUBLIC_KEY'
 
 
 class TestCustomer(TestCase):
@@ -82,36 +82,36 @@ class TestTransaction(TestCase):
                           'variable_name':
                           'cart_id',
                           'value': '8393'}]
-    #     self.api.initialize_transaction(
-    #         amount=30000, email='test@gmail.com', reference='sales90',
-    #         invoice_limit=4, metadata={'custom_fields': custom_fields},
-    #         transaction_charge=200, bearer='account', channels=['card'])
-    #     self.transaction_reference = self.api.transaction_reference
-    #     self.transaction_access_code = self.api.transaction_access_code
-    #
-    # def test_create_transaction(self):
-    #     self.assertEqual(self.api.ctx.status, True)
-    #     self.assertEqual(self.api.ctx.message, 'Authorization URL created')
-    #     self.assertEqual(self.api.ctx.data['reference'],
-    #                      'sales90')
-    #     self.assertEqual(self.transaction_reference,
-    #                      self.api.transaction_reference)
-    #     self.assertEqual(self.transaction_access_code,
-    #                      self.api.transaction_access_code)
-    #
-    # def test_verify_transaction(self):
-    #     self.api.verify_transaction(reference='sales90')
-    #     self.assertEqual(True, self.api.ctx.status)
-    #     self.assertEqual(self.api.ctx.message, 'Verification successful')
-    #     self.assertEqual(self.api.ctx.data['amount'], 3000000)
-    #     self.assertEqual(self.api.ctx.data['currency'], 'NGN')
-    #     self.assertEqual(self.api.ctx.data['status'], 'success')
-    #     self.assertEqual(self.api.ctx.data['reference'], 'sales90')
-    #     self.assertEqual(self.api.ctx.data['domain'], 'test')
-    #     self.assertEqual(self.api.ctx.data['metadata'], '0')
-    #     self.assertEqual(self.api.ctx.data['gateway_response'], 'Successful')
-    #     self.assertEqual(self.api.ctx.data['message'], 'null')
-    #     self.assertEqual(self.api.ctx.data['channel'], 'card')
+        self.api.initialize_transaction(
+            amount=30000, email='test@gmail.com', reference='sales90',
+            invoice_limit=4, metadata={'custom_fields': custom_fields},
+            transaction_charge=200, bearer='account', channels=['card'])
+        self.transaction_reference = self.api.transaction_reference
+        self.transaction_access_code = self.api.transaction_access_code
+
+    def test_create_transaction(self):
+        self.assertEqual(self.api.ctx.status, True)
+        self.assertEqual(self.api.ctx.message, 'Authorization URL created')
+        self.assertEqual(self.api.ctx.data['reference'],
+                         'sales90')
+        self.assertEqual(self.transaction_reference,
+                         self.api.transaction_reference)
+        self.assertEqual(self.transaction_access_code,
+                         self.api.transaction_access_code)
+
+    def test_verify_transaction(self):
+        self.api.verify_transaction(reference='sales90')
+        self.assertEqual(True, self.api.ctx.status)
+        self.assertEqual(self.api.ctx.message, 'Verification successful')
+        self.assertEqual(self.api.ctx.data['amount'], 3000000)
+        self.assertEqual(self.api.ctx.data['currency'], 'NGN')
+        self.assertEqual(self.api.ctx.data['status'], 'success')
+        self.assertEqual(self.api.ctx.data['reference'], 'sales90')
+        self.assertEqual(self.api.ctx.data['domain'], 'test')
+        self.assertEqual(self.api.ctx.data['metadata'], '0')
+        self.assertEqual(self.api.ctx.data['gateway_response'], 'Successful')
+        self.assertEqual(self.api.ctx.data['message'], 'null')
+        self.assertEqual(self.api.ctx.data['channel'], 'card')
 
     def test_list_transaction(self):
         self.api.list_transaction(perPage=10, page=2, customer=3765111,
