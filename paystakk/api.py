@@ -1,5 +1,5 @@
-from paystakk.request import PaystackRequest
-from paystakk.utils import build_params
+from request import PaystackRequest
+from utils import build_params
 
 
 class Customer(object):
@@ -151,3 +151,97 @@ class PaymentPage(object):
 
         url = '{host}/page'.format(host=self.api_url)
         self.ctx.post(url, json=params)
+
+class Subaccount(object):
+    def __init__(self, **kwargs):
+        self.__base = PaystackRequest(**kwargs)
+        self.__url = "https://api.paystack.co/subaccount"
+
+    def __getattr__(self, item):
+        return getattr(self.__base, item)
+
+    @property
+    def ctx(self):
+        return self.__base
+
+    @property
+    def url(self):
+        return self.__url
+
+    @url.setter
+    def url(self, value):
+        self.__url = value
+
+    @property
+    def integration(self):
+        return self.ctx.data.get("integration", "")
+
+    @property
+    def subaccount_code(self):
+        return self.ctx.data.get("subaccount_code", "")
+
+    @property
+    def id(self):
+        return self.ctx.data.get("id", "")
+
+    @property
+    def createdAt(self):
+        return self.ctx.data.get("createdAt", "")
+
+    @property
+    def updatedAt(self):
+        return self.ctx.data.get("updatedAt", "")
+
+    def createSubaccount(self, business_name, settlement_bank, account_number, percentage_charge,
+                         primary_contact_email=None, primary_contact_name=None, primary_contact_phone=None,
+                         metadata=None, settlement_schedule=["Auto", "Weekly", "Monthly", "Manual"]):
+        params = build_params(business_name=business_name, settlement_bank=settlement_bank,
+                              account_number=account_number, percentage_charge=percentage_charge,
+                              primary_contact_email=primary_contact_email, primary_contact_name=primary_contact_name,
+                              primary_contact_phone=primary_contact_phone,
+                              metadata=metadata, settlement_schedule=settlement_schedule)
+        self.ctx.post(self.url, json=params)
+
+
+class TransferRecipient(object):
+    def __init__(self, **kwargs):
+        self.__base = PaystackRequest(**kwargs)
+        self.__url = "https://api.paystack.co/transferrecipient"
+
+    def __getattr__(self, item):
+        return (self.__base, item)
+
+    @property
+    def ctx(self):
+        return self.__base
+
+    @property
+    def url(self):
+        return self.__url
+
+    @url.setter
+    def url(self, value):
+        self.__url = value
+
+    @property
+    def recipient_code(self):
+        return self.ctx.data.get("recipient_code", "")
+
+    @property
+    def id(self):
+        return self.ctx.data.get("id", "")
+
+    @property
+    def createdAt(self):
+        return self.ctx.data.get("createdAt", "")
+
+    @property
+    def updatedAt(self):
+        return self.ctx.data.get("updatedAt", "")
+
+    def create_Transfer_recipient(self, name, account_number, bank_code, currency="NGN",
+                                  description=None, type=["nuban"], metadata=None):
+        params = build_params(name=name, account_number=account_number, bank_code=bank_code, currency=currency,
+                              description=description, type=type, metadata=metadata)
+
+        self.ctx.post(self.url, json=params)
