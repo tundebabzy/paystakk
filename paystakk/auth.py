@@ -1,4 +1,4 @@
-from paystakk.keys import Keys
+from keys import Keys
 
 
 class BearerTokenAuth(object):

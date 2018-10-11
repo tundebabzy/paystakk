@@ -1,6 +1,6 @@
 import requests
 
-from paystakk.auth import BearerTokenAuth
+from auth import BearerTokenAuth
 
 
 class PaystackRequest(object):
