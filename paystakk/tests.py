@@ -3,11 +3,11 @@ from unittest import TestCase
 
 import time
 
-from paystakk.utils import build_params
-from paystakk.api import TransferControl, PaymentPage, Customer, Invoice
+from utils import build_params
+from api import TransferControl, PaymentPage, Customer, Invoice
 
-SECRET_KEY = 'YOUR_PAYSTACK_KEY'
-PUBLIC_KEY = 'YOUR_PAYSTACK_KEY'
+SECRET_KEY = 'sk_test_04d09de6922fa975afdc7b5eb40ff357e74b9f01'
+PUBLIC_KEY = 'pk_test_666fbd4fca373a2a88ec13f6f22dfb46cbdec709'
 
 
 class TestCustomer(TestCase):
