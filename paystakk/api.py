@@ -1,5 +1,5 @@
-from request import PaystackRequest
-from utils import build_params
+from .request import PaystackRequest
+from .utils import build_params
 
 
 class Customer(object):
