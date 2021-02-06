@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 def validate_post(res):
@@ -16,12 +17,14 @@ def validate_get(res):
 
 
 def build_params(**kwargs):
-    params = {}
+    params = {'notify': false}
     for kw in kwargs:
         if kwargs[kw]:
             if kw.lower() == 'amount':
                 params[kw] = kwargs[kw] * 100
+            elif isinstance(kwargs[kw], dict):
+                params[kw] = build_params(**kwargs[kw])
             else:
-                params[kw] = kwargs[kw]
+                params[kw] = str(kwargs[kw], 'UTF-8') if isinstance(kwargs[kw], bytes) else kwargs[kw]
 
     return params
