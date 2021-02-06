@@ -17,7 +17,7 @@ def validate_get(res):
 
 
 def build_params(**kwargs):
-    params = {'notify': false}
+    params = {'send_notification': False}
     for kw in kwargs:
         if kwargs[kw]:
             if kw.lower() == 'amount':
