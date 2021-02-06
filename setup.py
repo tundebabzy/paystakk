@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 	name='paystakk',
-	version='0.0.3',
+	version='0.0.4',
 	packages=['paystakk'],
 	url='',
 	license='MIT',
