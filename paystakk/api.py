@@ -49,30 +49,54 @@ class Customer(object):
         self.ctx.get(url_)
 
 
+"""
+Use this to create paystack invoices
+Note: `__url` is deprecated. Use either `__notification_url` or `__payment_url`
+depending on your use case
+"""
 class Invoice(object):
     def __init__(self, **kwargs):
         self.__base = PaystackRequest(**kwargs)
-        self.__url = 'https://api.paystack.co/paymentrequest'
+        self.__url = 'https://api.paystack.co/paymentrequest'   # deprecated
+        self.__notification_url = 'https://api.paystack.co/paymentrequest'
+        self.__payment_url = 'https://paystack.com/pay'
 
     @property
     def ctx(self):
         return self.__base
 
     @property
-    def url(self):
+    def url(self):  # deprecated
         return self.__url
 
-    @url.setter
+    @url.setter # deprecated
     def url(self, value):
         self.__url = value
 
     @property
+    def payment_url(self):
+        return self.__notification_url + self.request_code
+
+    @property
+    def notification_url(self):
+        return self.__notification_url + self.request_code
+
+    @property
     def invoice_code(self):
-        return self.ctx.data.get('invoice_code')
+        # do not use this any more
+        return None
+
+    @property
+    def invoice_number(self):
+        return self.ctx.data.get('invoice_number')
 
     @property
     def invoice_id(self):
-        return self.ctx.data.get('invoice_id')
+        return None
+
+    @property
+    def request_code(self):
+        return self.ctx.data.get('request_code')
 
     def __getattr__(self, item):
         return getattr(self.__base, item)
@@ -82,6 +106,8 @@ class Invoice(object):
                        metadata=None, send_notification=True, draft=False,
                        has_invoice=False, invoice_number=None):
 
+        # Note that `invoice_number` has to be an integer else it won't have
+        # effect
         params = build_params(customer=customer, amount=amount,
                               due_date=due_date, description=description,
                               line_items=line_items, tax=tax, currency=currency,
